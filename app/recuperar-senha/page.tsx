@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { ArrowLeft, Check, Mail, Tractor, TreePine } from "lucide-react";
@@ -82,24 +81,16 @@ export default function RecoverPasswordPage() {
         <span className="absolute right-[27%] bottom-[30%] h-7 w-7 rounded-full border border-klutch-teal-light/15" />
       </div>
 
-      <section className="relative w-full max-w-[430px]">
-        <Link
-          className="absolute left-0 top-1 flex h-9 w-9 items-center justify-center rounded-full text-klutch-teal transition-colors hover:bg-klutch-teal-soft focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent"
-          href="/"
-          aria-label="Voltar para o login"
-        >
-          <ArrowLeft size={20} strokeWidth={2.5} />
-        </Link>
+      <Link
+        className="absolute left-5 top-5 flex h-9 w-9 items-center justify-center rounded-full text-klutch-teal transition-colors hover:bg-klutch-teal-soft focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent sm:left-8 sm:top-8"
+        href="/"
+        aria-label="Voltar para o login"
+      >
+        <ArrowLeft size={20} strokeWidth={2.5} />
+      </Link>
 
+      <section className="relative w-full max-w-[430px]">
         <header className="flex flex-col items-center text-center">
-          <Image
-            src="/Klutch-logo.png"
-            alt="Klutch"
-            width={280}
-            height={100}
-            priority
-            className="-translate-y-2 h-auto w-[150px] sm:w-[170px]"
-          />
           {status === "form" ? (
             <>
               <h1 className="mt-2 font-display text-[1.8rem] font-bold tracking-[-0.04em] text-klutch-foreground">
