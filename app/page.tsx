@@ -2,19 +2,8 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { LockKeyhole, Mail } from "lucide-react";
-
-function KlutchMark() {
-  return (
-    <div className="relative flex h-[84px] w-[84px] items-center justify-center rounded-full bg-[#3a9e94] shadow-[0_8px_20px_rgba(4,52,44,0.16)]">
-      <div className="absolute inset-[14px] rounded-full border-[9px] border-klutch-teal-soft border-r-klutch-amber" />
-      <div className="absolute left-[35px] top-[25px] h-7 w-4 rotate-[-18deg] rounded-[100%_0_100%_0] bg-klutch-teal-light" />
-      <div className="absolute left-[40px] top-[27px] h-5 w-px rotate-[-18deg] bg-klutch-teal-soft" />
-      <div className="absolute left-[35px] top-[32px] h-px w-4 rotate-[-18deg] bg-klutch-teal-soft" />
-      <div className="absolute left-[35px] top-[38px] h-px w-4 rotate-[-18deg] bg-klutch-teal-soft" />
-    </div>
-  );
-}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,12 +45,16 @@ export default function LoginPage() {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-8">
       <div className="pointer-events-none absolute -left-24 top-16 h-64 w-64 rounded-full border border-klutch-teal-accent/30" />
       <div className="pointer-events-none absolute -right-32 bottom-[-5rem] h-80 w-80 rounded-full bg-klutch-amber-soft/35" />
-      <section className="relative w-full max-w-md">
-        <header className="mb-10 flex flex-col items-center text-center">
-          <KlutchMark />
-          <p className="mt-3 font-display text-[2.1rem] font-bold tracking-[-0.06em] text-klutch-muted">
-            Klutch
-          </p>
+      <section className="relative w-full max-w-md -translate-y-12">
+        <header className="relative -top-3 mb-4 flex justify-center">
+          <Image
+            src="/Klutch-logo.png"
+            alt="Klutch"
+            width={280}
+            height={100}
+            priority
+            className="h-auto w-[250px] scale-[1.15] sm:w-[280px]"
+          />
         </header>
 
         <div className="bg-white/20 px-1 sm:px-5">
@@ -96,6 +89,15 @@ export default function LoginPage() {
               </span>
             </label>
 
+            <div className="flex justify-start px-2">
+              <a
+                className="text-xs font-bold text-klutch-teal-light underline-offset-4 transition-colors hover:text-klutch-teal hover:underline focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent"
+                href="/recuperar-senha"
+              >
+                Esqueci minha senha
+              </a>
+            </div>
+
             {error && <p className="px-2 text-sm font-medium text-red-700">{error}</p>}
 
             <button
@@ -114,14 +116,30 @@ export default function LoginPage() {
           </div>
 
           <div className="grid gap-3">
-            <button className="flex h-12 items-center justify-center gap-3 rounded-full bg-klutch-amber text-sm font-bold text-klutch-amber-dark transition-colors hover:bg-klutch-amber-soft" type="button">
-              <span className="font-display text-base font-bold text-[#4285f4]">G</span> Login com Google
+            <button className="flex h-12 items-center justify-center rounded-full bg-klutch-amber text-sm font-bold text-klutch-amber-dark transition-colors hover:bg-klutch-amber-soft" type="button">
+              <span className="flex w-[185px] items-center gap-2">
+                <Image className="h-5 w-5 shrink-0" src="/google-icon.svg" alt="" width={20} height={20} />
+                <span className="text-left">Login com Google</span>
+              </span>
             </button>
-            <button className="flex h-12 items-center justify-center gap-3 rounded-full bg-klutch-amber text-sm font-bold text-klutch-amber-dark transition-colors hover:bg-klutch-amber-soft" type="button">
-              <span aria-hidden="true" className="flex h-[18px] w-[18px] items-end justify-center rounded-full bg-[#1877f2] font-display text-sm font-bold leading-[19px] text-white">f</span> Login com Facebook
+            <button className="flex h-12 items-center justify-center rounded-full bg-klutch-amber text-sm font-bold text-klutch-amber-dark transition-colors hover:bg-klutch-amber-soft" type="button">
+              <span className="flex w-[185px] items-center gap-2">
+                <Image className="h-5 w-5 shrink-0" src="/facebook-icon.svg" alt="" width={20} height={20} />
+                <span className="text-left">Login com Facebook</span>
+              </span>
             </button>
           </div>
         </div>
+
+        <p className="mt-7 text-center text-sm text-klutch-muted">
+          Ainda não tem uma conta?{" "}
+          <a
+            className="font-bold text-klutch-teal-light underline-offset-4 transition-colors hover:text-klutch-teal hover:underline focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent"
+            href="/cadastro"
+          >
+            Criar conta
+          </a>
+        </p>
 
         <p className="mt-6 text-center text-xs text-klutch-muted">
           Ao continuar, você concorda com os termos de uso do Klutch.

@@ -1,7 +1,7 @@
 ---
 name: Especialista Next.js
 description: Agente focado em arquitetura limpa e performance usando Next.js App Router.
-model: claude-3-5-sonnet
+model: claude-4-5-sonnet
 tools: ["code_search", "readfile", "editfiles"]
 ---
 
