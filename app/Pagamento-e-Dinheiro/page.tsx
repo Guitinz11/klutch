@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
 	Bell,
 	Check,
@@ -32,6 +33,11 @@ type Payment = {
 	amount: number;
 	status: PaymentStatus;
 	icon: "tractor" | "implement" | "truck";
+	location?: string;
+	startDate?: string;
+	endDate?: string;
+	days?: number;
+	dailyRate?: number;
 };
 
 type PaymentMethodOption = {
@@ -44,7 +50,7 @@ type PaymentMethodOption = {
 const formatCurrency = (value: number) =>
 	new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-const initialPayment: Payment = {
+const fallbackPayment: Payment = {
 	id: "payment-001",
 	equipmentName: "Reserva de Trator 5075E",
 	equipmentType: "Trator",
@@ -52,6 +58,48 @@ const initialPayment: Payment = {
 	amount: 350,
 	status: "pending",
 	icon: "tractor",
+};
+
+function getRentalPayment(searchParams: URLSearchParams) {
+	const product = rentalProducts[searchParams.get("machineId") ?? ""];
+	if (!product) return fallbackPayment;
+
+	const days = Math.max(1, Number(searchParams.get("days")) || 1);
+	const dailyRate = product.amount;
+
+	return {
+		...product,
+		amount: dailyRate * days,
+		date: searchParams.get("start") && searchParams.get("end")
+			? `${searchParams.get("start")} até ${searchParams.get("end")}`
+			: "Reserva selecionada",
+		days,
+		dailyRate,
+		startDate: searchParams.get("start") ?? undefined,
+		endDate: searchParams.get("end") ?? undefined,
+		status: "pending" as PaymentStatus,
+	};
+}
+
+const rentalProducts: Record<string, Omit<Payment, "status">> = {
+	mf4292: {
+		id: "payment-mf4292",
+		equipmentName: "Trator Massey Ferguson Modelo 4292 4x4 Ano 2015",
+		equipmentType: "Trator",
+		date: "Reserva selecionada",
+		amount: 220,
+		icon: "tractor",
+		location: "Lins, Centro - SP",
+	},
+	mf65x: {
+		id: "payment-mf65x",
+		equipmentName: "Trator MF65X ano 1974",
+		equipmentType: "Trator",
+		date: "Reserva selecionada",
+		amount: 180,
+		icon: "tractor",
+		location: "José Bonifácio - SP",
+	},
 };
 
 const initialHistory: Payment[] = [
@@ -96,15 +144,17 @@ function FinancialSummary({ total, completedPayments }: { total: number; complet
 }
 
 function UpcomingPayment({ payment, onPay, disabled }: { payment: Payment; onPay: () => void; disabled: boolean }) {
-	return <section><div className="mb-3 flex items-center justify-between"><h2 className="font-display text-lg font-bold tracking-[-0.03em] text-foreground">Próximo pagamento</h2><span className="text-xs text-klutch-muted">Reserva ativa</span></div><article className="rounded-3xl bg-white p-4 shadow-[0_6px_20px_rgba(44,44,42,0.06)]"><div className="flex items-start gap-3"><PaymentIcon type="tractor" active /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-start justify-between gap-2"><div><h3 className="font-display text-sm font-bold text-foreground">{payment.equipmentName}</h3><p className="mt-1 text-xs text-klutch-muted">Uso realizado em {payment.date}</p></div><StatusBadge status={payment.status} /></div><div className="mt-5 flex items-end justify-between gap-3"><div><p className="text-[10px] uppercase tracking-[0.12em] text-klutch-muted">Valor total</p><p className="mt-1 font-display text-xl font-bold text-klutch-teal">{formatCurrency(payment.amount)}</p></div><button type="button" onClick={onPay} disabled={disabled} className="min-h-11 rounded-xl bg-klutch-amber px-4 text-xs font-bold text-foreground transition hover:bg-[#D98D1C] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-klutch-amber-dark">{payment.status === "processing" ? <span className="flex items-center gap-2"><LoaderCircle size={15} className="animate-spin" />Processando...</span> : payment.status === "paid" ? <span className="flex items-center gap-2"><Check size={15} />Pagamento realizado</span> : "Pagar agora"}</button></div></div></div></article></section>;
+	return <section><div className="mb-3 flex items-center justify-between"><h2 className="font-display text-lg font-bold tracking-[-0.03em] text-foreground">Próximo pagamento</h2><span className="text-xs text-klutch-muted">Reserva ativa</span></div><article className="rounded-3xl bg-white p-4 shadow-[0_6px_20px_rgba(44,44,42,0.06)]"><div className="flex items-start gap-3"><PaymentIcon type={payment.icon} active /><div className="min-w-0 flex-1"><div className="flex flex-wrap items-start justify-between gap-2"><div><h3 className="font-display text-sm font-bold text-foreground">{payment.equipmentName}</h3><p className="mt-1 text-xs text-klutch-muted">{payment.equipmentType} · {payment.date}</p>{payment.location && <p className="mt-1 text-xs text-klutch-muted">{payment.location}</p>}</div><StatusBadge status={payment.status} /></div><div className="mt-5 flex items-end justify-between gap-3"><div><p className="text-[10px] uppercase tracking-[0.12em] text-klutch-muted">Valor total</p><p className="mt-1 font-display text-xl font-bold text-klutch-teal">{formatCurrency(payment.amount)}</p>{payment.dailyRate && <p className="mt-1 text-[10px] text-klutch-muted">{formatCurrency(payment.dailyRate)} x {payment.days} diária(s)</p>}</div><button type="button" onClick={onPay} disabled={disabled} className="min-h-11 rounded-xl bg-klutch-amber px-4 text-xs font-bold text-foreground transition hover:bg-[#D98D1C] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-klutch-amber-dark">{payment.status === "processing" ? <span className="flex items-center gap-2"><LoaderCircle size={15} className="animate-spin" />Processando...</span> : payment.status === "paid" ? <span className="flex items-center gap-2"><Check size={15} />Pagamento realizado</span> : "Pagar agora"}</button></div></div></div></article></section>;
 }
 
 function PaymentMethodSelector({ selected, onSelect }: { selected: PaymentMethod; onSelect: (method: PaymentMethod) => void }) {
 	return <section><h2 className="mb-3 font-display text-lg font-bold tracking-[-0.03em] text-foreground">Forma de pagamento</h2><div className="grid grid-cols-3 gap-2">{paymentMethods.map(({ id, name, description, icon: Icon }) => { const isSelected = id === selected; return <button type="button" key={id} onClick={() => onSelect(id)} aria-pressed={isSelected} className={`min-h-[106px] rounded-2xl border px-2 py-3 text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-klutch-teal ${isSelected ? "border-klutch-teal bg-klutch-teal-soft" : "border-[#D3D1C7] bg-white hover:border-klutch-teal-accent"}`}><span className={`mb-3 flex h-8 w-8 items-center justify-center rounded-lg ${isSelected ? "bg-white text-klutch-teal" : "bg-[#F1FEE8] text-klutch-muted"}`}><Icon size={17} /></span><span className={`block text-xs font-bold ${isSelected ? "text-klutch-teal" : "text-foreground"}`}>{name}</span><span className="mt-1 block text-[10px] leading-3 text-klutch-muted">{description}</span></button>; })}</div></section>;
 }
 
-function PaymentBreakdown({ expanded, onToggle }: { expanded: boolean; onToggle: () => void }) {
-	return <section className="rounded-2xl border border-[#D3D1C7] bg-white"><button type="button" onClick={onToggle} aria-expanded={expanded} className="flex min-h-14 w-full items-center justify-between px-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-klutch-teal"><span className="text-sm font-bold text-foreground">Como esse valor foi calculado?</span>{expanded ? <ChevronUp size={18} className="text-klutch-teal" /> : <ChevronDown size={18} className="text-klutch-teal" />}</button>{expanded && <div className="border-t border-[#D3D1C7]/70 px-4 pb-4 pt-3 text-xs"><div className="space-y-3 text-klutch-muted"><div className="flex justify-between"><span>Custo de utilização</span><span className="font-medium text-foreground">{formatCurrency(280)}</span></div><div className="flex justify-between"><span>Custos operacionais</span><span className="font-medium text-foreground">{formatCurrency(50)}</span></div><div className="flex justify-between"><span>Taxa da plataforma</span><span className="font-medium text-foreground">{formatCurrency(20)}</span></div></div><div className="mt-4 flex justify-between border-t border-[#D3D1C7] pt-3 text-sm font-bold text-klutch-teal"><span>TOTAL</span><span>{formatCurrency(350)}</span></div></div>}</section>;
+function PaymentBreakdown({ expanded, onToggle, amount, days = 1 }: { expanded: boolean; onToggle: () => void; amount: number; days?: number }) {
+	const usageCost = amount;
+
+	return <section className="rounded-2xl border border-[#D3D1C7] bg-white"><button type="button" onClick={onToggle} aria-expanded={expanded} className="flex min-h-14 w-full items-center justify-between px-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-klutch-teal"><span className="text-sm font-bold text-foreground">Como esse valor foi calculado?</span>{expanded ? <ChevronUp size={18} className="text-klutch-teal" /> : <ChevronDown size={18} className="text-klutch-teal" />}</button>{expanded && <div className="border-t border-[#D3D1C7]/70 px-4 pb-4 pt-3 text-xs"><div className="flex justify-between text-klutch-muted"><span>Uso da máquina ({days} diária(s))</span><span className="font-medium text-foreground">{formatCurrency(usageCost)}</span></div><div className="mt-4 flex justify-between border-t border-[#D3D1C7] pt-3 text-sm font-bold text-klutch-teal"><span>TOTAL</span><span>{formatCurrency(usageCost)}</span></div></div>}</section>;
 }
 
 function PaymentCard({ payment }: { payment: Payment }) {
@@ -129,8 +179,9 @@ function BottomNavigation() {
 	return <nav aria-label="Navegação principal" className="fixed inset-x-0 bottom-0 z-20 mx-auto flex h-[76px] max-w-[390px] items-center justify-around rounded-t-3xl bg-klutch-amber-soft px-3 pb-1 pt-2 shadow-[0_-8px_25px_rgba(44,44,42,0.12)] sm:bottom-5 sm:max-w-2xl sm:rounded-full"><button type="button" className="flex min-w-12 flex-col items-center gap-1 text-[10px] text-klutch-amber-dark/70"><Home size={19} /><span>Home</span></button><button type="button" className="flex min-w-12 flex-col items-center gap-1 text-[10px] text-klutch-amber-dark/70"><Zap size={19} /><span>Explorar</span></button><button type="button" aria-label="Criar nova reserva" className="relative flex h-14 w-14 -translate-y-5 items-center justify-center rounded-full bg-klutch-teal text-klutch-teal-soft shadow-[0_7px_15px_rgba(4,52,44,0.25)] transition hover:bg-klutch-teal-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-klutch-teal"><Plus size={28} /></button><button type="button" className="flex min-w-12 flex-col items-center gap-1 text-[10px] font-bold text-klutch-teal"><CreditCard size={19} /><span>Pagamentos</span></button><button type="button" className="flex min-w-12 flex-col items-center gap-1 text-[10px] text-klutch-amber-dark/70"><Heart size={19} /><span>Favoritos</span></button></nav>;
 }
 
-export default function PaymentsPage() {
-	const [payment, setPayment] = useState(initialPayment);
+function PaymentsContent() {
+	const searchParams = useSearchParams();
+	const [payment, setPayment] = useState(() => getRentalPayment(new URLSearchParams(searchParams.toString())));
 	const [history, setHistory] = useState(initialHistory);
 	const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>("pix");
 	const [isBreakdownOpen, setIsBreakdownOpen] = useState(false);
@@ -141,15 +192,19 @@ export default function PaymentsPage() {
 		if (payment.status !== "processing") return;
 		const timer = window.setTimeout(() => {
 			setPayment((current) => ({ ...current, status: "paid" }));
-			setHistory((current) => [{ ...initialPayment, status: "paid" }, ...current]);
-			setMonthlyTotal((current) => current + initialPayment.amount);
+			setHistory((current) => [{ ...payment, status: "paid" }, ...current]);
+			setMonthlyTotal((current) => current + payment.amount);
 		}, 2000);
 		return () => window.clearTimeout(timer);
-	}, [payment.status]);
+	}, [payment]);
 
 	const handlePayment = () => {
 		if (payment.status === "pending") setPayment((current) => ({ ...current, status: "processing" }));
 	};
 
-	return <main className="min-h-screen bg-background pb-28"><div className="mx-auto w-full max-w-[390px] sm:max-w-2xl sm:px-8 lg:max-w-3xl"><PaymentHeader /><div className="space-y-7 px-4 py-6 sm:px-0"><FinancialSummary total={monthlyTotal} completedPayments={payment.status === "paid" ? 4 : 3} /><UpcomingPayment payment={payment} onPay={handlePayment} disabled={payment.status !== "pending"} /><PaymentMethodSelector selected={selectedMethod} onSelect={setSelectedMethod} /><PaymentBreakdown expanded={isBreakdownOpen} onToggle={() => setIsBreakdownOpen((current) => !current)} /><PaymentHistory payments={history} onViewAll={() => setIsHistoryOpen(true)} /></div></div><BottomNavigation />{isHistoryOpen && <FullHistory payments={history} onClose={() => setIsHistoryOpen(false)} />}</main>;
+	return <main className="min-h-screen bg-background pb-28"><div className="mx-auto w-full max-w-[390px] sm:max-w-2xl sm:px-8 lg:max-w-3xl"><PaymentHeader /><div className="space-y-7 px-4 py-6 sm:px-0"><FinancialSummary total={monthlyTotal} completedPayments={payment.status === "paid" ? 4 : 3} /><UpcomingPayment payment={payment} onPay={handlePayment} disabled={payment.status !== "pending"} /><PaymentMethodSelector selected={selectedMethod} onSelect={setSelectedMethod} /><PaymentBreakdown amount={payment.amount} days={payment.days} expanded={isBreakdownOpen} onToggle={() => setIsBreakdownOpen((current) => !current)} /><PaymentHistory payments={history} onViewAll={() => setIsHistoryOpen(true)} /></div></div><BottomNavigation />{isHistoryOpen && <FullHistory payments={history} onClose={() => setIsHistoryOpen(false)} />}</main>;
+}
+
+export default function PaymentsPage() {
+	return <Suspense fallback={<main className="min-h-screen bg-background" />}><PaymentsContent /></Suspense>;
 }
