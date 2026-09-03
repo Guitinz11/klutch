@@ -129,6 +129,7 @@ export default function HomePage() {
               className="flex h-8 w-8 shrink-0 items-center justify-center text-black"
               type="button"
               aria-label="Notificações"
+              onClick={() => router.push("/Notificacoes")}
             >
               <Bell className="block" size={24} strokeWidth={2.2} />
             </button>
@@ -303,15 +304,15 @@ export default function HomePage() {
 
             <nav className="mt-5 flex flex-col gap-1" aria-label="Navegação principal">
               {[
-                { label: "Perfil", icon: UserCircle },
-                { label: "Configurações", icon: Settings },
-                { label: "Suporte", icon: LifeBuoy },
-              ].map(({ label, icon: Icon }) => (
+                { label: "Perfil", icon: UserCircle, route: "/Perfil" },
+                { label: "Configurações", icon: Settings, route: "/Perfil" },
+                { label: "Suporte", icon: LifeBuoy, route: "/suporte" },
+              ].map(({ label, icon: Icon, route }) => (
                 <button
                   className="flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-klutch-muted transition hover:bg-klutch-teal-soft hover:text-klutch-teal"
                   key={label}
                   type="button"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => { setIsMenuOpen(false); router.push(route); }}
                 >
                   <Icon size={20} strokeWidth={1.9} />
                   <span>{label}</span>
