@@ -7,15 +7,20 @@ import {
   ChevronDown,
   Heart,
   Home,
+  LifeBuoy,
   List,
+  LogOut,
   MapPin,
   Menu,
   Plus,
   Search,
+  Settings,
   SlidersHorizontal,
   Tractor,
   Truck,
+  UserCircle,
   Wheat,
+  X,
 } from "lucide-react";
 
 type Machine = {
@@ -75,6 +80,7 @@ export default function HomePage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const filteredMachines = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return machines.filter((machine) => {
@@ -97,6 +103,7 @@ export default function HomePage() {
             <button
               className="flex h-8 w-8 shrink-0 items-center justify-center text-black"
               type="button"
+              onClick={() => setIsMenuOpen(true)}
               aria-label="Abrir menu"
             >
               <Menu className="block" size={24} strokeWidth={2.2} />
@@ -264,6 +271,67 @@ export default function HomePage() {
           </div>
         </section>
       </div>
+
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-40 bg-klutch-teal/40 backdrop-blur-[2px]">
+          <button
+            className="absolute inset-0 h-full w-full cursor-default"
+            type="button"
+            aria-label="Fechar menu"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <aside
+            className="relative z-10 flex h-full w-[min(86vw,330px)] animate-[drawer-in_220ms_ease-out] flex-col bg-background px-5 pb-7 pt-6 shadow-[8px_0_25px_rgba(44,44,42,0.16)]"
+            aria-label="Menu lateral"
+          >
+            <div className="flex items-center justify-between border-b border-klutch-line/70 pb-5">
+              <div>
+                <p className="font-display text-xl font-bold text-klutch-teal">
+                  Klutch
+                </p>
+                <p className="mt-1 text-xs text-klutch-muted">Sua conta</p>
+              </div>
+              <button
+                className="flex h-9 w-9 items-center justify-center rounded-full text-klutch-muted transition hover:bg-klutch-teal-soft hover:text-klutch-teal"
+                type="button"
+                aria-label="Fechar menu"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <X size={21} strokeWidth={2.2} />
+              </button>
+            </div>
+
+            <nav className="mt-5 flex flex-col gap-1" aria-label="Navegação principal">
+              {[
+                { label: "Perfil", icon: UserCircle },
+                { label: "Configurações", icon: Settings },
+                { label: "Suporte", icon: LifeBuoy },
+              ].map(({ label, icon: Icon }) => (
+                <button
+                  className="flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-klutch-muted transition hover:bg-klutch-teal-soft hover:text-klutch-teal"
+                  key={label}
+                  type="button"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Icon size={20} strokeWidth={1.9} />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+
+            <div className="mt-auto border-t border-klutch-line/70 pt-5">
+              <button
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-bold text-[#b33b35] transition hover:bg-[#f8e5e2]"
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <LogOut size={20} strokeWidth={1.9} />
+                <span>Sair da conta</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       <nav className="fixed inset-x-0 bottom-0 z-10 mx-auto flex h-[78px] max-w-[390px] items-center justify-around rounded-t-[1.6rem] bg-klutch-amber-soft px-4 pb-1 pt-3 shadow-[0_-8px_25px_rgba(44,44,42,0.12)] sm:bottom-5 sm:h-[74px] sm:max-w-6xl sm:rounded-full sm:px-8">
         <button
