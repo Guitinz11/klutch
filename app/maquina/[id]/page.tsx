@@ -25,8 +25,8 @@ export default function MachineDetailPage() {
       };
 
   return (
-    <main className="min-h-screen bg-[#eeece5] text-[#17251f] sm:flex sm:justify-center sm:py-6">
-      <div className="relative flex min-h-screen w-full max-w-[390px] flex-col overflow-hidden border-[#d7d3c9] sm:min-h-[844px] sm:rounded-[1.5rem] sm:border sm:shadow-[0_12px_45px_rgba(44,44,42,0.16)]">
+    <main className="min-h-screen w-full bg-[#eeece5] text-[#17251f]">
+      <div className="relative flex min-h-screen w-full flex-col overflow-hidden">
         <section className="relative h-[171px] shrink-0 overflow-hidden bg-[#58c3a5]">
           <div className="absolute inset-0 bg-cover bg-center opacity-0" style={{ backgroundImage: `url("${product.image}")` }} />
           <div className="absolute inset-0 flex items-center justify-center text-klutch-teal"><Tractor size={54} strokeWidth={2.5} /></div>
