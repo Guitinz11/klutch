@@ -12,6 +12,8 @@
   --klutch-amber-soft: #fac775;
   --klutch-line: #d3d1c7;
   --klutch-muted: #5f5e5a;
+  --klutch-teal-200: #5dcaa5;
+  --klutch-amber-50: #faeeda;
 }
 
 @theme inline {
@@ -25,6 +27,18 @@
   --color-klutch-amber-soft: var(--klutch-amber-soft);
   --color-klutch-line: var(--klutch-line);
   --color-klutch-muted: var(--klutch-muted);
+  --color-teal-50: #e1f5ee;
+  --color-teal-200: #5dcaa5;
+  --color-teal-600: #0f6e56;
+  --color-teal-900: #04342c;
+  --color-amber-50: #faeeda;
+  --color-amber-100: #fac775;
+  --color-amber-200: #ef9f27;
+  --color-amber-600: #854f0b;
+  --color-gray-50: #f1efe8;
+  --color-gray-100: #d3d1c7;
+  --color-gray-600: #5f5e5a;
+  --color-gray-900: #2c2c2a;
   --font-sans: var(--font-inter);
   --font-display: var(--font-manrope);
 }
@@ -33,4 +47,19 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), sans-serif;
+}
+
+/* Barras criadas nas páginas legadas ficam inativas: a navegação global é a única fonte de verdade. */
+.klutch-page-shell main nav.fixed,
+.klutch-page-shell > div > nav.fixed {
+  display: none;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }

@@ -363,7 +363,7 @@ export default function AnnounceMachinePage() {
         </form>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-klutch-line bg-background/95 px-4 pb-4 pt-3 backdrop-blur sm:mx-auto sm:max-w-3xl sm:rounded-t-[1.25rem] sm:border-x">
+      <div className="fixed inset-x-0 bottom-[76px] z-30 border-t border-klutch-line bg-background/95 px-4 pb-4 pt-3 backdrop-blur sm:bottom-[92px] sm:mx-auto sm:max-w-3xl sm:rounded-t-[1.25rem] sm:border-x">
         <div className="mx-auto flex max-w-[390px] gap-3 sm:max-w-none">
           <button className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal bg-transparent text-sm font-bold text-klutch-teal transition-colors hover:bg-klutch-teal-soft focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent" type="button" onClick={handleSaveDraft}><Save size={17} />Salvar como rascunho</button>
           <button className="flex h-12 flex-1 items-center justify-center rounded-full bg-klutch-teal text-sm font-bold text-white transition-colors hover:bg-klutch-teal-light focus:outline-none focus:ring-4 focus:ring-klutch-teal-accent/40 disabled:cursor-not-allowed disabled:opacity-45" type="button" onClick={() => formRef.current?.requestSubmit()} disabled={!canPublish}>Publicar anúncio</button>
