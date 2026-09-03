@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFavorites } from "@/components/favorites/useFavorites";
 import {
   CalendarClock,
   ChevronLeft,
@@ -90,9 +91,10 @@ function MachineIcon({ machine, small = false }: { machine: FavoriteMachine; sma
 
 export default function FavoritesPage() {
   const router = useRouter();
-  const [favorites, setFavorites] = useState(initialFavorites);
+  const { favorites: storedFavorites, removeFavorite: removeStoredFavorite } = useFavorites();
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const favorites = useMemo<FavoriteMachine[]>(() => storedFavorites.map((machine) => ({ ...machine, distance: "Próximo de você", availability: "Disponível hoje", rentalCount: 0, tone: machine.category === "Transporte" || machine.category === "Colheita" ? "bg-klutch-amber-soft" : "bg-[#3a9e94]", icon: machine.category === "Transporte" ? Truck : machine.category === "Colheita" ? Wheat : Tractor })), [storedFavorites]);
 
   const filteredFavorites = useMemo(
     () => favorites.filter((machine) => activeCategory === "Todos" || machine.category === activeCategory),
@@ -103,7 +105,7 @@ export default function FavoritesPage() {
   function removeFavorite(id: string) {
     setRemovingId(id);
     window.setTimeout(() => {
-      setFavorites((current) => current.filter((machine) => machine.id !== id));
+      removeStoredFavorite(id);
       setRemovingId(null);
     }, 180);
   }
