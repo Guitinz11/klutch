@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
 	Award,
@@ -74,7 +74,8 @@ const menuItems: ProfileMenuItem[] = [
 	{ id: "listings", label: "Meus anúncios", description: "Gerencie seus equipamentos anunciados.", icon: Tractor, route: "/MeusAnuncios" },
 	{ id: "rentals", label: "Meus aluguéis", description: "Acompanhe suas reservas e utilizações.", icon: Calendar, route: "/MeusAlugueis" },
 	{ id: "reviews", label: "Minhas avaliações", description: "Veja suas avaliações realizadas.", icon: Star, route: "/Review" },
-	{ id: "favorites", label: "Favoritos", description: "Seus equipamentos favoritos.", icon: Heart, route: "/home" },
+	{ id: "favorites", label: "Favoritos", description: "Seus equipamentos favoritos.", icon: Heart, route: "/Favoritos" },
+	{ id: "verification", label: "Verificação de documentos", description: "Confirme sua identidade e proteja sua conta.", icon: ShieldCheck, route: "/verificacao" },
 	{ id: "notifications", label: "Notificações", description: "Gerencie seus alertas.", icon: Bell, route: "/Notificacoes" },
 ];
 
@@ -151,9 +152,10 @@ export default function ProfilePage() {
 	const [logoutOpen, setLogoutOpen] = useState(false);
 	const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 	const [feedback, setFeedback] = useState("");
+	useEffect(() => { try { const saved = window.localStorage.getItem("klutch:profile"); if (saved) setProfile(JSON.parse(saved) as UserProfile); } catch { window.localStorage.removeItem("klutch:profile"); } }, []);
 
 	const showFeedback = (message: string) => { setFeedback(message); window.setTimeout(() => setFeedback(""), 3000); };
-	const saveProfile = (updatedProfile: UserProfile) => { setProfile(updatedProfile); setEditing(false); showFeedback("Perfil atualizado com sucesso!"); };
+	const saveProfile = (updatedProfile: UserProfile) => { window.localStorage.setItem("klutch:profile", JSON.stringify(updatedProfile)); setProfile(updatedProfile); setEditing(false); showFeedback("Perfil atualizado com sucesso!"); };
 	const confirmLogout = () => { setLogoutOpen(false); showFeedback("Você saiu da sua conta."); };
 
 	return <main className="min-h-screen bg-background pb-32"><div className="mx-auto w-full max-w-[390px] sm:max-w-2xl sm:px-8 lg:max-w-3xl"><ProfileHeader onNotifications={() => router.push("/Notificacoes")} /><div className="space-y-7 px-4 py-5 sm:px-0"><ProfileHero profile={profile} onEdit={() => setEditing(true)} /><ProfileStats stats={profileStats} /><ProfileInformation profile={profile} onEdit={() => setEditing(true)} /><CooperativeCard cooperative={profile.cooperative} onView={() => showFeedback("Área da cooperativa em breve.")} /><ProfileMenu onNavigate={(route) => router.push(route)} onSettings={() => setSettingsOpen(true)} /><button type="button" onClick={() => setLogoutOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-2 text-xs font-bold text-[#a33d35] transition hover:bg-[#f8e5e2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a33d35]"><LogOut size={17} />Sair da conta</button></div></div>{feedback && <div role="status" className="fixed left-1/2 top-5 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-2xl bg-klutch-teal px-4 py-3 text-center text-sm font-semibold text-white shadow-lg">{feedback}</div>}<BottomNavigation />{editing && <EditProfileModal profile={profile} onClose={() => setEditing(false)} onSave={saveProfile} />}{settingsOpen && <SettingsModal notificationsEnabled={notificationsEnabled} onToggle={() => { setNotificationsEnabled((current) => !current); showFeedback(`Notificações ${notificationsEnabled ? "desativadas" : "ativadas"}.`); }} onClose={() => setSettingsOpen(false)} />}{logoutOpen && <LogoutModal onClose={() => setLogoutOpen(false)} onConfirm={confirmLogout} />}</main>;

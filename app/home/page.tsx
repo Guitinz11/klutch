@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFavorites } from "@/components/favorites/useFavorites";
 import {
   Bell,
   ChevronDown,
@@ -81,6 +82,7 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { favoriteIds, toggleFavorite } = useFavorites();
   const filteredMachines = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return machines.filter((machine) => {
@@ -232,9 +234,9 @@ export default function HomePage() {
                       className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#59636f] shadow-sm"
                       type="button"
                       aria-label={`Favoritar ${machine.name}`}
-                      onClick={(event) => event.stopPropagation()}
+                      onClick={(event) => { event.stopPropagation(); toggleFavorite(machine); }}
                     >
-                      <Heart size={16} />
+                      <Heart size={16} fill={favoriteIds.has(machine.id) ? "currentColor" : "none"} className={favoriteIds.has(machine.id) ? "text-klutch-amber-dark" : undefined} />
                     </button>
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
                       <span className="h-1.5 w-1.5 rounded-full bg-white" />

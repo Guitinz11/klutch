@@ -1,6 +1,6 @@
 "use client";
 
-import { createElement, useMemo, useState } from "react";
+import { createElement, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell, Calendar, CalendarDays, CheckCircle, Compass, Eye, Heart, Home,
@@ -35,10 +35,11 @@ export default function MeusAnunciosPage() {
   const [selected, setSelected] = useState<Listing | null>(null);
   const [form, setForm] = useState<ListingForm>(emptyForm);
   const [toast, setToast] = useState("");
+  useEffect(() => { try { const saved = window.localStorage.getItem("klutch:published-listing"); if (!saved) return; const listing = JSON.parse(saved) as { name: string; category: string; location: string; price: string; description?: string; savedAt: string }; setListings((current) => current.some((item) => item.id === `published-${listing.savedAt}`) ? current : [{ id: `published-${listing.savedAt}`, name: listing.name, category: listing.category, location: listing.location, dailyPrice: Number(listing.price.replace(/[^\d,]/g, "").replace(",", ".")) || 0, description: listing.description, status: "active", rating: 0, totalRentals: 0, createdAt: listing.savedAt }, ...current]); } catch { window.localStorage.removeItem("klutch:published-listing"); } }, []);
   const summary = useMemo(() => ({ total: listings.length, active: listings.filter((item) => item.status === "active").length, rented: listings.filter((item) => item.status === "rented").length, paused: listings.filter((item) => item.status === "paused").length }), [listings]);
   const visibleListings = useMemo(() => { const term = query.trim().toLowerCase(); return listings.filter((item) => (!term || `${item.name} ${item.category} ${item.location}`.toLowerCase().includes(term)) && (filter === "all" || item.status === filter)); }, [filter, listings, query]);
   const notify = (message: string) => { setToast(message); window.setTimeout(() => setToast(""), 2500); };
-  const openCreate = () => { setForm(emptyForm); setSelected(null); setModal("create"); };
+  const openCreate = () => router.push("/anunciar");
   const openEdit = (listing: Listing) => { setSelected(listing); setForm({ name: listing.name, category: listing.category, location: listing.location, dailyPrice: String(listing.dailyPrice), description: listing.description ?? "", status: listing.status }); setModal("edit"); };
   const updateForm = (field: keyof ListingForm, value: string) => setForm((current) => ({ ...current, [field]: value }));
   const validForm = Boolean(form.name.trim() && form.category && form.location.trim() && Number(form.dailyPrice) > 0);

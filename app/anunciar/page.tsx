@@ -77,6 +77,18 @@ export default function AnnounceMachinePage() {
     photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
+  useEffect(() => {
+    try {
+      const savedDraft = window.localStorage.getItem("klutch:listing-draft");
+      if (!savedDraft) return;
+      const draft = JSON.parse(savedDraft) as Record<string, string | boolean>;
+      setOwnerName(String(draft.ownerName ?? "")); setCpf(String(draft.cpf ?? "")); setPhone(String(draft.phone ?? ""));
+      setName(String(draft.name ?? "")); setBrand(String(draft.brand ?? "")); setCategory(String(draft.category ?? "")); setDescription(String(draft.description ?? "")); setPrice(String(draft.price ?? ""));
+      setAvailableFrom(String(draft.availableFrom ?? "")); setAvailableUntil(String(draft.availableUntil ?? "")); setCep(String(draft.cep ?? "")); setLocation(String(draft.location ?? "")); setAddressNumber(String(draft.addressNumber ?? "")); setComplement(String(draft.complement ?? "")); setCityState(String(draft.cityState ?? "")); setImmediateBooking(draft.immediateBooking !== false);
+      setFeedback("Rascunho restaurado neste dispositivo.");
+    } catch { window.localStorage.removeItem("klutch:listing-draft"); }
+  }, []);
+
   const canPublish = Boolean(
     ownerName.trim() &&
       cpf.replace(/\D/g, "").length === 11 &&
@@ -134,13 +146,21 @@ export default function AnnounceMachinePage() {
     return Object.keys(nextErrors).length === 0;
   }
 
+  function formSnapshot() { return { ownerName, cpf, phone, name, brand, category, description, price, availableFrom, availableUntil, cep, location, addressNumber, complement, cityState, immediateBooking, savedAt: new Date().toISOString() }; }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFeedback("");
-    if (validateForm()) setFeedback("Anúncio pronto para ser publicado.");
+    if (validateForm()) {
+      window.localStorage.setItem("klutch:published-listing", JSON.stringify(formSnapshot()));
+      window.localStorage.removeItem("klutch:listing-draft");
+      setFeedback("Anúncio publicado com sucesso.");
+      window.setTimeout(() => router.push("/MeusAnuncios"), 600);
+    }
   }
 
   function handleSaveDraft() {
+    window.localStorage.setItem("klutch:listing-draft", JSON.stringify(formSnapshot()));
     setFeedback("Rascunho salvo neste dispositivo.");
   }
 
@@ -363,7 +383,7 @@ export default function AnnounceMachinePage() {
         </form>
       </div>
 
-      <div className="fixed inset-x-0 bottom-[76px] z-30 border-t border-klutch-line bg-background/95 px-4 pb-4 pt-3 backdrop-blur sm:bottom-[92px] sm:mx-auto sm:max-w-3xl sm:rounded-t-[1.25rem] sm:border-x">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-klutch-line bg-background/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:mx-auto sm:max-w-3xl sm:rounded-t-[1.25rem] sm:border-x">
         <div className="mx-auto flex max-w-[390px] gap-3 sm:max-w-none">
           <button className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal bg-transparent text-sm font-bold text-klutch-teal transition-colors hover:bg-klutch-teal-soft focus:outline-none focus:ring-2 focus:ring-klutch-teal-accent" type="button" onClick={handleSaveDraft}><Save size={17} />Salvar como rascunho</button>
           <button className="flex h-12 flex-1 items-center justify-center rounded-full bg-klutch-teal text-sm font-bold text-white transition-colors hover:bg-klutch-teal-light focus:outline-none focus:ring-4 focus:ring-klutch-teal-accent/40 disabled:cursor-not-allowed disabled:opacity-45" type="button" onClick={() => formRef.current?.requestSubmit()} disabled={!canPublish}>Publicar anúncio</button>
