@@ -9,27 +9,23 @@ export default function MachineDetailPage() {
   const params = useParams<{ id: string }>();
   const [isReserved, setIsReserved] = useState(false);
 
-  const isSecondMachine = params.id === "mf4292";
-  const product = isSecondMachine
-    ? {
+  const products = {
+    mf65x: { name: "Trator MF65X ano 1974", location: "José Bonifácio - SP", price: "R$ 39.800", image: "https://commons.wikimedia.org/wiki/Special:FilePath/Massey%20Ferguson%20tractor.jpg" },
+    mf4292: {
         name: "Trator Massey Ferguson Modelo 4292 4x4 Ano 2015",
         location: "Lins, Centro - SP",
         price: "R$ 220",
         image: "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20Massey%20Ferguson.jpg",
-      }
-    : {
-        name: "Trator Massey Ferguson 5310",
-        location: "Ayrosa, Osasco - SP",
-        price: "R$ 180",
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Massey%20Ferguson%20tractor.jpg",
-      };
+    },
+    bh180: { name: "Trator BH 180", location: "Itatinga, Área Rural de Itatinga - SP", price: "R$ 230.000", image: "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20in%20a%20field.jpg" },
+  };
+  const product = products[params.id as keyof typeof products] ?? products.mf65x;
 
   return (
     <main className="min-h-screen w-full bg-[#eeece5] text-[#17251f]">
       <div className="relative flex min-h-screen w-full flex-col overflow-hidden">
         <section className="relative h-[171px] shrink-0 overflow-hidden bg-[#58c3a5]">
-          <div className="absolute inset-0 bg-cover bg-center opacity-0" style={{ backgroundImage: `url("${product.image}")` }} />
-          <div className="absolute inset-0 flex items-center justify-center text-klutch-teal"><Tractor size={54} strokeWidth={2.5} /></div>
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url("${product.image}")` }} />
           <button className="absolute left-3 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#edf4ee] text-[#4f6c64]" onClick={() => router.back()} type="button" aria-label="Voltar"><ChevronLeft size={19} /></button>
           <button className="absolute right-3 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#edf4ee] text-[#4f6c64]" type="button" aria-label="Favoritar produto"><Heart size={16} /></button>
           <span className="absolute bottom-2 right-3 rounded-full bg-klutch-teal px-2 py-0.5 text-[10px] font-bold text-white">1/5</span>
@@ -56,7 +52,7 @@ export default function MachineDetailPage() {
           <div className="mt-4 grid grid-cols-2 divide-x rounded-[0.65rem] border border-[#d0ccc3] bg-[#f8f8f6] py-3 text-center text-[10px] text-[#465951]"><div><span className="block text-base text-[#e6a13b]">☆</span>4.8 avaliação</div><div><span className="block text-base text-[#e6a13b]">◷</span>Resp. em 1h</div></div>
         </section>
 
-        <div className="absolute inset-x-0 bottom-0 flex gap-2 bg-[#eeece5] px-4 pb-4 pt-2"><button className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal text-xs font-bold text-klutch-teal" type="button"><MessageCircle size={14} />Conversar</button><button className="flex h-10 flex-[1.3] items-center justify-center rounded-full bg-[#efa02b] text-xs font-bold text-klutch-amber-dark transition-colors hover:bg-[#f6b64e]" onClick={() => setIsReserved(true)} type="button">{isReserved ? "Reserva solicitada" : "Reservar agora"}</button></div>
+        <div className="absolute inset-x-0 bottom-0 flex gap-2 bg-[#eeece5] px-4 pb-4 pt-2"><button className="flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal text-xs font-bold text-klutch-teal" type="button"><MessageCircle size={14} />Conversar</button><button className="flex h-10 flex-[1.3] items-center justify-center rounded-full bg-[#efa02b] text-xs font-bold text-klutch-amber-dark transition-colors hover:bg-[#f6b64e]" onClick={() => { setIsReserved(true); router.push(`/Pagamento-e-Dinheiro?machineId=${encodeURIComponent(params.id)}`); }} type="button">{isReserved ? "Reserva solicitada" : "Reservar agora"}</button></div>
       </div>
     </main>
   );

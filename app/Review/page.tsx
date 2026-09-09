@@ -228,7 +228,7 @@ function ReviewsSummary({
       <div className="absolute -bottom-20 right-20 h-36 w-36 rounded-full border-[18px] border-[#5DCAA5]/10" />
       <div className="relative">
         <div className="mb-7 flex items-start justify-between">
-          <div>
+          <div className="min-w-0 pr-3">
             <p className="mb-1 text-sm text-[#BFE8D7]">
               Sua experiência no Klutch
             </p>
@@ -245,20 +245,20 @@ function ReviewsSummary({
             </p>
             <p className="mt-1 text-[11px] text-[#BFE8D7]">Avaliações feitas</p>
           </div>
-          <div className="pl-4">
+          <div className="min-w-0 px-3">
             <p className="font-display text-2xl font-extrabold">
               {average.toFixed(1).replace(".", ",")}
             </p>
-            <div className="mt-1 flex items-center gap-1">
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5">
               <RatingStars rating={average} />
-              <span className="text-[11px] text-[#BFE8D7]">média</span>
+              <span className="whitespace-nowrap text-[11px] text-[#BFE8D7]">média</span>
             </div>
           </div>
-          <div className="pl-4">
+          <div className="min-w-0 pl-3">
             <p className="font-display text-2xl font-extrabold">
               {pendingCount}
             </p>
-            <p className="mt-1 text-[11px] text-[#BFE8D7]">Pendentes</p>
+            <p className="mt-1 break-words text-[11px] text-[#BFE8D7]">Pendentes</p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -81,6 +81,20 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const updateKeyboardState = () => {
+      setIsKeyboardOpen(window.innerHeight - viewport.height > 160);
+    };
+
+    viewport.addEventListener("resize", updateKeyboardState);
+    updateKeyboardState();
+    return () => viewport.removeEventListener("resize", updateKeyboardState);
+  }, []);
   const filteredMachines = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return machines.filter((machine) => {
@@ -109,7 +123,12 @@ export default function HomePage() {
               <Menu className="block" size={24} strokeWidth={2.2} />
             </button>
             <div className="flex h-[52px] min-w-0 flex-1 items-center gap-2 rounded-full bg-[#d9d9d9] px-4 text-[#5d5d5d] sm:gap-3 sm:px-5">
-              <Search aria-hidden="true" className="block shrink-0 text-[#bdbdbd]" size={21} strokeWidth={2.2} />
+              <Search
+                aria-hidden="true"
+                className="block shrink-0 text-[#bdbdbd]"
+                size={21}
+                strokeWidth={2.2}
+              />
               <input
                 className="min-w-0 flex-1 bg-transparent text-sm italic outline-none placeholder:text-[#5d5d5d] sm:text-base"
                 value={query}
@@ -122,7 +141,11 @@ export default function HomePage() {
                 type="button"
                 aria-label="Filtrar máquinas"
               >
-                <SlidersHorizontal className="block" size={21} strokeWidth={2.2} />
+                <SlidersHorizontal
+                  className="block"
+                  size={21}
+                  strokeWidth={2.2}
+                />
               </button>
             </div>
             <button
@@ -183,7 +206,11 @@ export default function HomePage() {
                   <span
                     className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] ${category.tone}`}
                   >
-                    <CategoryIcon className="block" size={23} strokeWidth={2.1} />
+                    <CategoryIcon
+                      className="block"
+                      size={23}
+                      strokeWidth={2.1}
+                    />
                   </span>
                   <span className="w-full truncate text-[10px] font-medium text-klutch-muted sm:text-xs">
                     {category.label}
@@ -301,7 +328,10 @@ export default function HomePage() {
               </button>
             </div>
 
-            <nav className="mt-5 flex flex-col gap-1" aria-label="Navegação principal">
+            <nav
+              className="mt-5 flex flex-col gap-1"
+              aria-label="Navegação principal"
+            >
               {[
                 { label: "Perfil", icon: UserCircle },
                 { label: "Configurações", icon: Settings },
@@ -333,7 +363,9 @@ export default function HomePage() {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 mx-auto flex h-[78px] max-w-[390px] items-center justify-around rounded-t-[1.6rem] bg-klutch-amber-soft px-4 pb-1 pt-3 shadow-[0_-8px_25px_rgba(44,44,42,0.12)] sm:bottom-5 sm:h-[74px] sm:max-w-6xl sm:rounded-full sm:px-8">
+      <nav
+        className={`fixed inset-x-0 bottom-0 z-10 mx-auto flex h-[78px] max-w-[390px] items-center justify-around rounded-t-[1.6rem] bg-klutch-amber-soft px-4 pb-1 pt-3 shadow-[0_-8px_25px_rgba(44,44,42,0.12)] sm:bottom-5 sm:h-[74px] sm:max-w-6xl sm:rounded-full sm:px-8 ${isKeyboardOpen || isMenuOpen ? "hidden" : ""}`}
+      >
         <button
           className="flex min-w-12 flex-col items-center gap-1 text-[10px] font-bold text-klutch-amber-dark"
           type="button"

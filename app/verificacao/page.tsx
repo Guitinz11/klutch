@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type TipoDocumento = "cnh" | "rg";
 type CanalVerificacao = "email" | "sms" | "whatsapp";
@@ -587,6 +588,7 @@ function StepStatusConclusao({
 }
 
 export default function VerificacaoPage() {
+  const router = useRouter();
   const [form, setForm] = useState<FormularioVerificacao>(initialForm);
   const [stepIndex, setStepIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(59);
@@ -646,7 +648,15 @@ export default function VerificacaoPage() {
   };
 
   const handleBack = () => {
-    setStepIndex((current) => Math.max(current - 1, 0));
+    if (stepIndex === 0) {
+      if (window.history.length > 1) {
+        router.back();
+      } else {
+        router.push("/home");
+      }
+      return;
+    }
+    setStepIndex((current) => current - 1);
   };
 
   const handleResendCode = () => {
@@ -691,7 +701,6 @@ export default function VerificacaoPage() {
           <button
             type="button"
             onClick={handleBack}
-            disabled={stepIndex === 0}
             className="inline-flex items-center gap-2 rounded-full border border-[#0F6E56] bg-white px-3 py-2 text-sm font-semibold text-[#0F6E56] transition-colors hover:bg-[#E1F5EE] disabled:cursor-not-allowed disabled:border-[#D3D1C7] disabled:text-[#5F5E5A]"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -713,7 +722,6 @@ export default function VerificacaoPage() {
             <button
               type="button"
               onClick={handleBack}
-              disabled={stepIndex === 0}
               className="rounded-full border border-[#0F6E56] bg-white px-5 py-3 text-sm font-semibold text-[#0F6E56] transition-colors hover:bg-[#E1F5EE] disabled:cursor-not-allowed disabled:border-[#D3D1C7] disabled:text-[#5F5E5A]"
             >
               Voltar

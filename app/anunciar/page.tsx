@@ -178,7 +178,7 @@ export default function AnnounceMachinePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pb-32 text-foreground">
+    <main className="min-h-screen bg-background pb-36 text-foreground">
       <div className="mx-auto w-full max-w-[390px] sm:max-w-3xl sm:px-6 sm:py-5">
         <header className="sticky top-0 z-20 flex items-center gap-3 rounded-b-[1.25rem] bg-white px-4 py-3 shadow-[0_8px_25px_rgba(44,44,42,0.07)] sm:rounded-[1.25rem]">
           <button
@@ -288,7 +288,7 @@ export default function AnnounceMachinePage() {
 
             <label className="mt-5 block">
               <span className="block text-sm font-semibold text-klutch-muted">Descrição</span>
-              <textarea className="mt-2 min-h-28 w-full resize-y rounded-[1rem] border border-klutch-amber bg-white px-4 py-3 text-sm text-klutch-foreground outline-none placeholder:text-klutch-muted/65 focus:border-klutch-teal-light focus:ring-2 focus:ring-klutch-teal-accent/20" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva o estado da máquina, itens inclusos, condições de uso..." aria-label="Descrição" />
+              <textarea className="mt-2 h-28 max-h-44 w-full resize-y overflow-y-auto rounded-[1rem] border border-klutch-amber bg-white px-4 py-3 text-sm text-klutch-foreground outline-none placeholder:text-klutch-muted/65 focus:border-klutch-teal-light focus:ring-2 focus:ring-klutch-teal-accent/20 sm:max-h-52" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva o estado da máquina, itens inclusos, condições de uso..." aria-label="Descrição" />
             </label>
           </section>
 
