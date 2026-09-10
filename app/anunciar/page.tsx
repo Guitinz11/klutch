@@ -308,7 +308,7 @@ export default function AnnounceMachinePage() {
 
             <label className="mt-5 block">
               <span className="block text-sm font-semibold text-klutch-muted">Descrição</span>
-              <textarea className="mt-2 min-h-28 w-full resize-y rounded-[1rem] border border-klutch-amber bg-white px-4 py-3 text-sm text-klutch-foreground outline-none placeholder:text-klutch-muted/65 focus:border-klutch-teal-light focus:ring-2 focus:ring-klutch-teal-accent/20" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva o estado da máquina, itens inclusos, condições de uso..." aria-label="Descrição" />
+              <textarea rows={5} className="mt-2 block h-32 max-h-[30vh] w-full resize-y overflow-y-auto rounded-[1rem] border border-klutch-amber bg-white px-4 py-3 text-sm text-klutch-foreground outline-none placeholder:text-klutch-muted/65 focus:border-klutch-teal-light focus:ring-2 focus:ring-klutch-teal-accent/20 sm:max-h-52" value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Descreva o estado da máquina, itens inclusos, condições de uso..." aria-label="Descrição" />
             </label>
           </section>
 

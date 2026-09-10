@@ -16,7 +16,7 @@ export default function MachineDetailPage() {
       name: "Trator MF65X ano 1974",
       location: "José Bonifácio",
       price: "R$ 39.800",
-      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Massey%20Ferguson%20tractor.jpg",
+      image: "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20Massey%20Ferguson.jpg",
     },
     mf4292: {
         name: "Trator Massey Ferguson Modelo 4292 4x4 Ano 2015",
@@ -37,7 +37,7 @@ export default function MachineDetailPage() {
     <main className="min-h-screen w-full bg-[#eeece5] text-[#17251f]">
       <div className="relative flex min-h-screen w-full flex-col overflow-hidden">
         <section className="relative h-[171px] shrink-0 overflow-hidden bg-[#58c3a5]">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url("${product.image}")` }} />
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url("${product.image}"), linear-gradient(135deg, #d8f1e7, #faeeda)` }} />
           <div className="absolute inset-0 flex items-center justify-center bg-klutch-teal/10 text-klutch-teal"><Tractor size={54} strokeWidth={2.5} /></div>
           <button className="absolute left-3 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#edf4ee] text-[#4f6c64]" onClick={() => router.back()} type="button" aria-label="Voltar"><ChevronLeft size={19} /></button>
           <button className="absolute right-3 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#edf4ee] text-[#4f6c64]" type="button" aria-label="Favoritar produto" onClick={() => toggleFavorite({ id: params.id, category: "Tratores", name: product.name, location: product.location, price: `${product.price} / diária` })}><Heart size={16} fill={favoriteIds.has(params.id) ? "currentColor" : "none"} /></button>
@@ -65,7 +65,7 @@ export default function MachineDetailPage() {
           <div className="mt-4 grid grid-cols-2 divide-x rounded-[0.65rem] border border-[#d0ccc3] bg-[#f8f8f6] py-3 text-center text-[10px] text-[#465951]"><div><span className="block text-base text-[#e6a13b]">☆</span>4.8 avaliação</div><div><span className="block text-base text-[#e6a13b]">◷</span>Resp. em 1h</div></div>
         </section>
 
-        <div className="fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-xl gap-2 border-t border-klutch-line bg-[#eeece5]/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur"><button className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal text-xs font-bold text-klutch-teal" type="button" onClick={() => router.push(`/chat/${params.id}`)}><MessageCircle size={14} />Conversar</button><button className="flex h-11 flex-[1.3] items-center justify-center rounded-full bg-[#efa02b] text-xs font-bold text-klutch-amber-dark transition-colors hover:bg-[#f6b64e]" onClick={() => setIsReserved(true)} type="button">{isReserved ? "Aluguel solicitado" : "Alugar agora"}</button></div>
+        <div className="fixed inset-x-0 bottom-0 z-30 mx-auto flex max-w-xl gap-2 border-t border-klutch-line bg-[#eeece5]/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur"><button className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-klutch-teal text-xs font-bold text-klutch-teal" type="button" onClick={() => router.push(`/chat/${params.id}`)}><MessageCircle size={14} />Conversar</button><button className="flex h-11 flex-[1.3] items-center justify-center rounded-full bg-[#efa02b] text-xs font-bold text-klutch-amber-dark transition-colors hover:bg-[#f6b64e]" onClick={() => { setIsReserved(true); router.push(`/Pagamento-e-Dinheiro?machineId=${encodeURIComponent(params.id)}`); }} type="button">{isReserved ? "Aluguel solicitado" : "Alugar agora"}</button></div>
       </div>
     </main>
   );

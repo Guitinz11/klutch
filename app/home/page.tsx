@@ -52,7 +52,7 @@ const machines: Machine[] = [
     location: "José Bonifácio",
     time: "Ontem, 06:52",
     image:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Massey%20Ferguson%20tractor.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20Massey%20Ferguson.jpg",
   },
   {
     id: "mf4292",
@@ -227,8 +227,8 @@ export default function HomePage() {
                   tabIndex={0}
                 >
                   <div
-                    className="relative h-[145px] overflow-hidden rounded-[0.7rem] bg-klutch-teal-soft bg-cover bg-center sm:h-[190px]"
-                    style={{ backgroundImage: `url("${machine.image}")` }}
+                    className="relative h-[145px] overflow-hidden rounded-[0.7rem]  g-klutch-teal-soft bg-cover bg-center sm:h-[190px]"
+                    style={{ backgroundImage: `url("${machine.image}"), linear-gradient(135deg, #d8f1e7, #faeeda)` }}
                   >
                     <button
                       className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#59636f] shadow-sm"
